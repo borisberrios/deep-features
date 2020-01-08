@@ -17,7 +17,10 @@ def generate_array_images(dir_image_base, dir_files_base):
      """
 
     sketches = Sketches(dir_image_base, dir_files_base)
+    print ("Imagenes del entrenamiento:")
     imgs_train, labs_train, _ = sketches.as_array("train.txt")
+
+    print ("Images para queries:")
     imgs_test, labs_test, _ = sketches.as_array("test.txt")
 
     imgs_train.astype(np.float32).tofile(os.path.join(dir_files_base, "imgs_train.np"))
@@ -26,9 +29,7 @@ def generate_array_images(dir_image_base, dir_files_base):
     imgs_test.astype(np.float32).tofile(os.path.join(dir_files_base, "imgs_test.np"))
     labs_test.astype(np.int64).tofile(os.path.join(dir_files_base, "labs_test.np"))
 
-    print (imgs_train.shape, labs_train.shape, imgs_test.shape, labs_test.shape)
     return imgs_train, labs_train, imgs_test, labs_test
-
 
 def generate_deep_features(dir_model_base, file_base_dir, imgs_train, imgs_test):
 
