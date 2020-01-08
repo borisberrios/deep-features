@@ -76,4 +76,4 @@ if __name__ == '__main__':
     base_model_dir = args.base_model_dir
 
     imgs_train, labs_train, imgs_test, labs_test = generate_array_images(imagesdir, file_base_dir)
-    deep_features = generate_deep_features(base_model_dir, file_base_dir, imgs_train, imgs_test)
+    deep_features, query_deep_features = generate_deep_features(base_model_dir, file_base_dir, imgs_train, imgs_test)
