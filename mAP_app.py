@@ -13,7 +13,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description = '')
     parser.add_argument('-filedir', type = str, required = True, help = 'directorio de arreglos deep features y labels')
     parser.add_argument('-ranking', type = int, required = True, help = 'Cantidad de elementos renkings para calculo de ')
-
+    
     args = parser.parse_args()
     file_base_dir = args.filedir
     ranking = args.ranking

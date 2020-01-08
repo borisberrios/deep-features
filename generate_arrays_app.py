@@ -30,7 +30,7 @@ def generate_array_images(dir_image_base, dir_files_base):
     return imgs_train, labs_train, imgs_test, labs_test
 
 
-def generate_deep_features(dir_model_base, imgs_train, imgs_test):
+def generate_deep_features(dir_model_base, file_base_dir, imgs_train, imgs_test):
 
     """
         Genera arreglo deep features
@@ -56,11 +56,23 @@ def generate_deep_features(dir_model_base, imgs_train, imgs_test):
 
     query_deep_features = np.array(query_deep_features)
 
-    deep_features.astype(np.float32).tofile(os.path.join("sketch_images/files", "deep_features.np"))
-    query_deep_features.astype(np.float32).tofile(os.path.join("sketch_images/files", "query_deep_features.np"))
+    deep_features.astype(np.float32).tofile(os.path.join(file_base_dir, "deep_features.np"))
+    query_deep_features.astype(np.float32).tofile(os.path.join(file_base_dir, "query_deep_features.np"))
 
     return deep_features, query_deep_features
 
+
 if __name__ == '__main__':
-    imgs_train, labs_train, imgs_test, labs_test = generate_array_images("../../../git_images/sketch_images/png_w256", "files")
-    deep_features = generate_deep_features("modelo-tf", imgs_train, labs_train, imgs_test, labs_test)
+
+    parser = argparse.ArgumentParser(description = '')
+    parser.add_argument('-filedir', type = str, required = True, help = 'directorio en donde se encuentran archivo con listado de imagenes y en donde se guardan las deep features')
+    parser.add_argument('-imagesdir', type = str, required = True, help = 'directorio base donde se encuentran las imagenes')
+    parser.add_argument('-base_model_dir', type = str, required = True, help = 'directorio base donde se encuentra el modelo entrenado')
+
+    args = parser.parse_args()
+    file_base_dir = args.filedir
+    imagesdir = args.imagesdir
+    base_model_dir = args.base_model_dir
+
+    imgs_train, labs_train, imgs_test, labs_test = generate_array_images(imagesdir, file_base_dir)
+    deep_features = generate_deep_features(base_model_dir, file_base_dir, imgs_train, imgs_test)
