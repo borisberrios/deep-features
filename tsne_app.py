@@ -15,16 +15,17 @@ class SktTSNE:
 
     """
 
-    def __init__(self, features):
+    def __init__(self, features, figsize=(5,5)):
         self.features = features
+        self.figsize = figsize
 
     def fit(self):
         tsne = TSNE(n_components=2, random_state=0)
         self.sketches_tsne = tsne.fit_transform(self.features)
 
 
-    def plot_tsne(self, xy, colors=None, alpha=0.7, figsize=(5,5), s=3, cmap='hsv'):
-        plt.figure(figsize=figsize, facecolor='white')
+    def plot_tsne(self, xy, colors=None, alpha=0.7, s=3, cmap='hsv'):
+        plt.figure(figsize=self.figsize, facecolor='white')
         plt.margins(0)
         plt.axis('off')
         fig = plt.scatter(xy[:,0], xy[:,1],
@@ -49,7 +50,7 @@ class SktTSNE:
 
         distances = []
         for point, neighbor_indices in zip(self.features, indices):
-            neighbor_points = query_deep_features[neighbor_indices[1:]] # skip the first one, which should be itself
+            neighbor_points = self.features[neighbor_indices[1:]] # skip the first one, which should be itself
             cur_distances = np.sum([euclidean(point, neighbor) for neighbor in neighbor_points])
             distances.append(cur_distances)
         distances = np.asarray(distances)
