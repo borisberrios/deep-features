@@ -37,21 +37,21 @@ def generate_deep_features(dir_model_base, file_base_dir, imgs_train, imgs_test)
         Genera arreglo deep features
     """
 
-    cnn_tf = CNN_TF(dir_model_base)
+    cnn = CNN(dir_model_base)
 
     deep_features = []
     query_deep_features = []
 
     batch_size = 1000
     for i in range( int(math.ceil(len(imgs_train) / batch_size)) ):
-      current_deep_features = cnn_tf.features(imgs_train[i * batch_size: i * batch_size + batch_size])
+      current_deep_features = cnn.features(imgs_train[i * batch_size: i * batch_size + batch_size])
       deep_features.extend(current_deep_features)
       print (f" deep features: {(i + 1) * batch_size}")
 
     deep_features = np.array(deep_features)
 
     for i in range( int(math.ceil(len(imgs_test) / batch_size)) ):
-      current_deep_features = cnn_tf.features(imgs_test[i * batch_size: i * batch_size + batch_size])
+      current_deep_features = cnn.features(imgs_test[i * batch_size: i * batch_size + batch_size])
       query_deep_features.extend(current_deep_features)
       print (f" query deep features: {(i + 1) * batch_size}")
 
