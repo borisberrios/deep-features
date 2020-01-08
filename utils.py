@@ -6,6 +6,9 @@ LABS_TRAIN = 'labs_train.np'
 LABS_TEST = 'labs_test.np'
 IMGS_TRAIN = 'imgs_train.np'
 IMGS_TEST = 'imgs_test.np'
+DEEP_FEATURES = 'deep_features.np'
+QUERY_DEEP_FEATURES = 'query_deep_features.np'
+
 
 def np_labs_from_file(dir_files_base):
     """
@@ -40,10 +43,10 @@ def load_deep_features(dir_files_base):
         y del conjunto de test (6000 imagenes). Las imagenes del conjunt test serán las queries
     """
 
-    deep_features = np.fromfile(os.path.join(dir_files_base, 'deep_features.np'), dtype=np.float32)
+    deep_features = np.fromfile(os.path.join(dir_files_base, DEEP_FEATURES), dtype=np.float32)
     deep_features = np.reshape(deep_features, (14000,1024))
 
-    query_deep_features = np.fromfile(os.path.join(dir_files_base, 'query_deep_features.np'), dtype=np.float32)
+    query_deep_features = np.fromfile(os.path.join(dir_files_base, QUERY_DEEP_FEATURES), dtype=np.float32)
     query_deep_features = np.reshape(query_deep_features, (6000,1024))
 
     return deep_features, query_deep_features

@@ -57,7 +57,7 @@ class Similarity:
 
   def ap(self, ranking, labels, query_label):
       f_caracteristica = self._funcion_caracteristica(ranking, labels, query_label)
-     
+
       ap = 0
       for i in range(len(ranking)):
           p = self._precision(f_caracteristica, i)
@@ -72,10 +72,10 @@ class Similarity:
       return ap
 
 
-  def mAP(self, query_deep_features, query_labels, top = 5):
+  def mAP(self, query_deep_features, query_labels, top = 5, to_normalize = False):
     mAP = 0
     for i in range(len(query_deep_features)):
-      ranking = self.search(query_deep_features[i], to_normalize = True, top = top)
+      ranking = self.search(query_deep_features[i], to_normalize = to_normalize, top = top)
       ap = self.ap(ranking, self.data_labs, query_labels[i])
       mAP += ap
 
@@ -94,6 +94,7 @@ class Similarity:
     db_images = self.data_images
 
     if to_normalize:
+      #print ("[Similarity] usando normalizacion")
       fv = self.sqrt_normalization(image)
       db_images = self.normalized_data_images
 

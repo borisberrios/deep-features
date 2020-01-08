@@ -11,7 +11,7 @@ from CNN import CNN
 
 class SktSearcher:
 
-    def __init__(self, base_images_dir, base_files_dir, base_dir_model):
+    def __init__(self, base_images_dir, base_files_dir, base_dir_model, to_normalize = False):
         self.base_images_dir = base_images_dir
         self.images = Images()
         self.base_files_dir = base_files_dir
@@ -135,12 +135,17 @@ if __name__ == "__main__":
     parser.add_argument('-imagesdir', type = str, required = True, help = 'directorio base donde se encuentran las imagenes')
     parser.add_argument('-base_model_dir', type = str, required = True, help = 'directorio base donde se encuentra el modelo entrenado')
     parser.add_argument('-ranking', type = int, required = True, help = 'Cantidad de elementos renkings para calculo de ')
+    parser.add_argument('-normalization', help = 'flag que indica la utilizacion de square root normalizacion', action='store_true')
 
     args = parser.parse_args()
     file_base_dir = args.filedir
     ranking = args.ranking
     imagesdir = args.imagesdir
     base_model_dir = args.base_model_dir
+    normalization = args.normalization
 
-    sktsearcher = SktSearcher(imagesdir, file_base_dir, base_model_dir)
+    if normalization:
+        print ("Usando normalizacion")
+
+    sktsearcher = SktSearcher(imagesdir, file_base_dir, base_model_dir, normalization)
     sktsearcher.run()
