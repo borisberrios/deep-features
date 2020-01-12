@@ -3,6 +3,8 @@ import os
 import sys
 import argparse
 import numpy as np
+import pandas as pd
+import seaborn as sns
 
 from sklearn.neighbors import NearestNeighbors
 from scipy.spatial.distance import euclidean
@@ -15,49 +17,35 @@ class SktTSNE:
 
     """
 
-    def __init__(self, features, figsize=(5,5)):
+    def __init__(self, features, labels):
         self.features = features
-        self.figsize = figsize
+        self.labels = labels
 
     def fit(self):
         tsne = TSNE(n_components=2, random_state=0)
         self.sketches_tsne = tsne.fit_transform(self.features)
 
 
-    def plot_tsne(self, xy, colors=None, alpha=0.7, s=3, cmap='hsv'):
-        plt.figure(figsize=self.figsize, facecolor='white')
-        plt.margins(0)
-        plt.axis('off')
-        fig = plt.scatter(xy[:,0], xy[:,1],
-                    c=colors, # set colors of markers
-                    cmap=cmap, # set color map of markers
-                    alpha=alpha, # set alpha of markers
-                    marker='o', # use smallest available marker (square)
-                   # s=s, # set marker size. single pixel is 0.5 on retina, 1.0 otherwise
-                  #  lw=0, # don't use edges
-                    edgecolor='') # don't use edges
-        # remove all axes and whitespace / borders
-        fig.axes.get_xaxis().set_visible(True)
-        fig.axes.get_yaxis().set_visible(True)
+    def plot(self, size = 5):
+        df = pd.DataFrame({'class': self.labels,
+               'x': self.sketches_tsne[:,0],
+               'y': self.sketches_tsne[:,1]})
+
+        frame = pd.pivot_table(df, index=['class','x'], values=['y'], aggfunc=np.sum).reset_index()
+        sns.lmplot(x='x' , y='y', data=frame, hue='class',palette='hls', fit_reg=False,size= size, aspect=5/3, legend = False, legend_out=False,scatter_kws={"s": 20})
         plt.show()
 
-    def show_standar(self):
-        self.plot_tsne(self.sketches_tsne)
+    def show_with_filters(self, class_list):
+        df = pd.DataFrame({'class': self.labels,
+               'x': self.sketches_tsne[:,0],
+               'y': self.sketches_tsne[:,1]})
 
-    def show_with_color(self):
-        nns = NearestNeighbors(n_neighbors=10).fit(self.sketches_tsne)
-        distances, indices = nns.kneighbors(self.sketches_tsne)
+        df_scatter = df[df['class'].isin(class_list)]
+        print (df_scatter)
 
-        distances = []
-        for point, neighbor_indices in zip(self.features, indices):
-            neighbor_points = self.features[neighbor_indices[1:]] # skip the first one, which should be itself
-            cur_distances = np.sum([euclidean(point, neighbor) for neighbor in neighbor_points])
-            distances.append(cur_distances)
-        distances = np.asarray(distances)
-        distances -= distances.min()
-        distances /= distances.max()
-
-        self.plot_tsne(self.sketches_tsne, np.clip(distances, 0, 1), cmap='viridis')
+        frame = pd.pivot_table(df_scatter, index=['class','x'], values=['y'], aggfunc=np.sum).reset_index()
+        sns.lmplot(x='x' , y='y', data=frame, hue='class',palette='hls', fit_reg=False,size= 10, legend = True, legend_out=False,scatter_kws={"s": 20})
+        plt.show()
 
 
 
@@ -65,22 +53,28 @@ if __name__ == '__main__':
 
     parser = argparse.ArgumentParser(description = '')
     parser.add_argument('-filedir', type = str, required = True, help = 'directorio de arreglos deep features y labels')
-    parser.add_argument('-colors', help = 'flag que indica la utilizacion de square root normalizacion', action='store_true')
+    parser.add_argument('-class_list', nargs='*', type=int, default = [])
 
     args = parser.parse_args()
     filedir = args.filedir
-    colors = args.colors
+    class_list = args.class_list
 
     if not os.path.exists(filedir):
         sys.exit(1)
 
+    #   print ("lista de clases:", class_list, len(class_list))
+
     deep_features, query_deep_features = utils.load_deep_features(filedir)
-    skttsne = SktTSNE(query_deep_features)
+    labs_train, labs_test = utils.np_labs_from_file(filedir)
+
+    skttsne = SktTSNE(query_deep_features, labs_train)
+
+    #skttsne = SktTSNE(query_deep_features, labs_train)
 
     print ("Generando vectores T-SNE")
     skttsne.fit()
 
-    if colors:
-        skttsne.show_with_color()
+    if len(class_list) > 0:
+        skttsne.show_with_filters(class_list)
     else:
-        skttsne.show_standar()
+        skttsne.plot()
