@@ -35,7 +35,7 @@ class SktTSNE:
         sns.lmplot(x='x' , y='y', data=frame, hue='class',palette='hls', fit_reg=False,size= size, aspect=5/3, legend = False, legend_out=False,scatter_kws={"s": 20})
         plt.show()
 
-    def show_with_filters(self, class_list):
+    def show_with_filters(self, class_list, size = 5):
         df = pd.DataFrame({'class': self.labels,
                'x': self.sketches_tsne[:,0],
                'y': self.sketches_tsne[:,1]})
@@ -44,7 +44,7 @@ class SktTSNE:
         print (df_scatter)
 
         frame = pd.pivot_table(df_scatter, index=['class','x'], values=['y'], aggfunc=np.sum).reset_index()
-        sns.lmplot(x='x' , y='y', data=frame, hue='class',palette='hls', fit_reg=False,size= 10, legend = True, legend_out=False,scatter_kws={"s": 20})
+        sns.lmplot(x='x' , y='y', data=frame, hue='class',palette='hls', fit_reg=False,size = size, legend = True, legend_out=False,scatter_kws={"s": 20})
         plt.show()
 
 
