@@ -25,6 +25,8 @@ class SktSearcher:
         self.similarity = Similarity(deep_features, self.labs_train)
         self.filenames_db = self._generate_list_filename_train()
 
+        self.to_normalize = to_normalize
+
     def _generate_list_filename_train(self):
         """ genera una lista con los nombres de los archivos de la db de imagenes """
 
@@ -105,7 +107,7 @@ class SktSearcher:
                         img = self.images.as_array_one(filename, (128,128))
                         fv = self.cnn.feature(img)
                         fv = np.squeeze(fv)
-                        ranking = self.similarity.search(fv, to_normalize = True, top = 5)
+                        ranking = self.similarity.search(fv, to_normalize = self.to_normalize, top = 5)
 
                         ap = self.similarity.ap(ranking, self.labs_train, query_label)
                         print(f"ap: {ap}")
