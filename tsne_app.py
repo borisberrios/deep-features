@@ -41,7 +41,6 @@ class SktTSNE:
                'y': self.sketches_tsne[:,1]})
 
         df_scatter = df[df['class'].isin(class_list)]
-        print (df_scatter)
 
         frame = pd.pivot_table(df_scatter, index=['class','x'], values=['y'], aggfunc=np.sum).reset_index()
         sns.lmplot(x='x' , y='y', data=frame, hue='class',palette='hls', fit_reg=False,size = size, legend = True, legend_out=False,scatter_kws={"s": 20})
@@ -68,8 +67,6 @@ if __name__ == '__main__':
     labs_train, labs_test = utils.np_labs_from_file(filedir)
 
     skttsne = SktTSNE(query_deep_features, labs_train)
-
-    #skttsne = SktTSNE(query_deep_features, labs_train)
 
     print ("Generando vectores T-SNE")
     skttsne.fit()
